@@ -1,0 +1,45 @@
+name: mainboard_create_release
+
+on:
+  push:
+    # only mainboard tags
+    tags: 'mainboard_v*.*.*'
+
+
+jobs:
+  create_fabrication_data:
+    uses: ./.github/workflows/mainboard_create_fabrication_data.yml
+    
+  create_release:
+    runs-on: ubuntu-18.04
+    needs: create_fabrication_data
+    steps:
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }} # tag_name is the same tag name the triggered this workflow
+          release_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          
+      - name: download fabrication data
+        uses: actions/download-artifact@v3
+        with:
+          name: fabrication_data
+          path: ./fabrication_data
+          
+      - name: zip fabrication data
+        run: zip -r fabrication_data fabrication_data
+          
+      - name: upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # references to the step with id 'create_release'
+          asset_path: ./fabrication_data.zip
+          asset_name: ${{ github.ref_name }}__fabrication_data.zip
+          asset_content_type: application/zip

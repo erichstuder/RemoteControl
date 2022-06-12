@@ -5,6 +5,14 @@
   )
 
   (paper "A4")
+  (title_block
+    (title "Mainboard")
+    (comment 1 "${PROJECT}")
+    (comment 2 "${PROJECT-URL}")
+    (comment 3 "${GIT-COMMIT-HASH}")
+    (comment 4 "${GIT-COMMIT-TAG}")
+  )
+
   (layers
     (0 "F.Cu" signal)
     (31 "B.Cu" signal)
@@ -38,6 +46,19 @@
   )
 
   (setup
+    (stackup
+      (layer "F.SilkS" (type "Top Silk Screen"))
+      (layer "F.Paste" (type "Top Solder Paste"))
+      (layer "F.Mask" (type "Top Solder Mask") (thickness 0.01))
+      (layer "F.Cu" (type "copper") (thickness 0.035))
+      (layer "dielectric 1" (type "core") (thickness 1.51) (material "FR4") (epsilon_r 4.5) (loss_tangent 0.02))
+      (layer "B.Cu" (type "copper") (thickness 0.035))
+      (layer "B.Mask" (type "Bottom Solder Mask") (thickness 0.01))
+      (layer "B.Paste" (type "Bottom Solder Paste"))
+      (layer "B.SilkS" (type "Bottom Silk Screen"))
+      (copper_finish "None")
+      (dielectric_constraints no)
+    )
     (pad_to_mask_clearance 0)
     (grid_origin 110.2471 44.0637)
     (pcbplotparams
@@ -74,6 +95,11 @@
       (outputdirectory "fabrication-outputs")
     )
   )
+
+  (property "GIT-COMMIT-HASH" "noHash")
+  (property "GIT-COMMIT-TAG" "noTag")
+  (property "PROJECT" "Remote Control - Mainboard")
+  (property "PROJECT-URL" "https://github.com/erichstuder/RemoteControl")
 
   (net 0 "")
   (net 1 "unconnected-(A1-Pad3)")
@@ -1931,6 +1957,9 @@
   (gr_line (start 121.5661 122.4074) (end 121.5429 122.3953) (layer "Edge.Cuts") (width 0.2) (tstamp fcdd0754-ccbe-4e49-9cb4-ed7588bfc1bb))
   (gr_line (start 121.3867 122.2996) (end 121.3654 122.2844) (layer "Edge.Cuts") (width 0.2) (tstamp fcfaa285-c901-4f03-ae19-f3c9728a1245))
   (gr_line (start 122.2994 119.5718) (end 122.3256 119.57294) (layer "Edge.Cuts") (width 0.2) (tstamp ffd3e4a5-55a7-44bd-8520-e6057a727415))
+  (gr_text "${PROJECT}\n${PROJECT-URL}\ntag: ${GIT-COMMIT-TAG} | commit: ${GIT-COMMIT-HASH}" (at 91.1971 95.4987 90) (layer "F.SilkS") (tstamp 338b7824-6fa7-42ef-b79a-c6dc90689f4e)
+    (effects (font (size 1 1) (thickness 0.15)) (justify left))
+  )
 
   (segment (start 101.67996 49.655) (end 108.9727 49.655) (width 0.5) (layer "F.Cu") (net 11) (tstamp 09302926-f541-4afa-b4d5-471f295351e5))
   (segment (start 101.663509 49.638549) (end 101.67996 49.655) (width 0.25) (layer "F.Cu") (net 11) (tstamp 69f5bc9b-cb5e-4e3d-b15a-16e39725c48a))

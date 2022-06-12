@@ -1,0 +1,35 @@
+kibot:
+  version: 1
+  
+preflight:
+  erc_warnings: true
+  run_erc: true
+  run_drc: true
+  set_text_variables:
+    - variable: 'GIT-COMMIT-TAG'
+      command: 'git tag'
+    - variable: 'GIT-COMMIT-HASH'
+      command: 'git rev-parse --short HEAD'
+      
+outputs:
+  - name: 'gerbers'
+    type: gerber
+    layers:
+      - 'F.Cu'
+      - 'B.Cu'
+      - 'F.Paste'
+      - 'F.Silkscreen'
+      - 'F.Mask'
+      - 'B.Mask'
+      - 'Edge.Cuts'
+      
+  - name: 'drill files'
+    type: excellon
+    
+  - name: 'schematic documentation'
+    type: pdf_sch_print
+    
+  - name: 'pcb documentation'
+    type: pdf_pcb_print
+    layers:
+      - 'F.Silkscreen'
