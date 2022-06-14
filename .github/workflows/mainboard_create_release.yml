@@ -32,7 +32,7 @@ jobs:
           path: ./fabrication_data
           
       - name: zip fabrication data
-        run: zip -r fabrication_data fabrication_data
+        run: zip -jr fabrication_data fabrication_data
           
       - name: upload release asset
         uses: actions/upload-release-asset@v1
@@ -41,5 +41,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # references to the step with id 'create_release'
           asset_path: ./fabrication_data.zip
-          asset_name: ${{ github.ref_name }}__fabrication_data.zip
+          asset_name: ${{ github.event.repository.name }}__${{ github.ref_name }}__fabrication_data.zip
           asset_content_type: application/zip
