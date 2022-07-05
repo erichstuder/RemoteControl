@@ -2,55 +2,55 @@
 #include "buttons.h"
 
 namespace buttons{
-	static const pin_size_t ButtonBackLeftPin = 6;
-	static const pin_size_t ButtonBackRightPin = 5;
-	static const pin_size_t ButtonFrontLeftPin = 4;
-	static const pin_size_t ButtonFrontRightPin = 3;
-	static bool backLeftPressedInterrupt = false;
-	static bool backRightPressedInterrupt = false;
-	static bool frontLeftPressedInterrupt = false;
-	static bool frontRightPressedInterrupt = false;
+	static const pin_size_t SW1_pin = D4;
+	static const pin_size_t SW3_pin = A6;
+	static const pin_size_t SW4_pin = D3;
+	static const pin_size_t SW6_pin = A5;
+	static bool sw1_isPressedInterrupt = false;
+	static bool sw3_isPressedInterrupt = false;
+	static bool sw4_isPressedInterrupt = false;
+	static bool sw6_isPressedInterrupt = false;
 	static Buttons pressedButton = Buttons::None;
 	static unsigned long lastPressedMillis = 0;
 
-	static void backLeftPressed_interrupt();
-	static void backRightPressed_interrupt();
-	static void frontLeftPressed_interrupt();
-	static void frontRightPressed_interrupt();
+	static void sw1_pressedInterrupt();
+	static void sw3_pressedInterrupt();
+	static void sw4_pressedInterrupt();
+	static void sw6_pressedInterrupt();
 	static void updateLastPressedTime();
 
 	static void init_Implementation(){
-		pinMode(ButtonBackLeftPin, INPUT_PULLUP);
-		pinMode(ButtonBackRightPin, INPUT_PULLUP);
-		pinMode(ButtonFrontLeftPin, INPUT_PULLUP);
-		pinMode(ButtonFrontRightPin, INPUT_PULLUP);
+		pinMode(SW1_pin, INPUT_PULLUP);
+		pinMode(SW3_pin, INPUT_PULLUP);
+		pinMode(SW4_pin, INPUT_PULLUP);
+		pinMode(SW6_pin, INPUT_PULLUP);
 
-		attachInterrupt(digitalPinToInterrupt(ButtonBackLeftPin), backLeftPressed_interrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(ButtonBackRightPin), backRightPressed_interrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(ButtonFrontLeftPin), frontLeftPressed_interrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(ButtonFrontRightPin), frontRightPressed_interrupt, FALLING);
+		attachInterrupt(digitalPinToInterrupt(SW1_pin), sw1_pressedInterrupt, FALLING);
+		attachInterrupt(digitalPinToInterrupt(SW3_pin), sw3_pressedInterrupt, FALLING);
+		attachInterrupt(digitalPinToInterrupt(SW4_pin), sw4_pressedInterrupt, FALLING);
+		attachInterrupt(digitalPinToInterrupt(SW6_pin), sw6_pressedInterrupt, FALLING);
 	}
 	void (*init)() = init_Implementation;
 
 	static void tick_Implementation(){
-		if(backLeftPressedInterrupt){
-			backLeftPressedInterrupt = false;
-			pressedButton = Buttons::BackLeft;
+		if(sw1_isPressedInterrupt){
+			sw1_isPressedInterrupt = false;
+			pressedButton = Buttons::SW1;
 			updateLastPressedTime();
 		}
-		else if(backRightPressedInterrupt){
-			backRightPressedInterrupt = false;
-			pressedButton = Buttons::BackRight;
+		else if(sw3_isPressedInterrupt){
+			sw3_isPressedInterrupt = false;
+			pressedButton = Buttons::SW3;
 			updateLastPressedTime();
 		}
-		else if(frontLeftPressedInterrupt){
-			frontLeftPressedInterrupt = false;
-			pressedButton = Buttons::FrontLeft;
+		else if(sw4_isPressedInterrupt){
+			sw4_isPressedInterrupt = false;
+			pressedButton = Buttons::SW4;
 			updateLastPressedTime();
 		}
-		else if(frontRightPressedInterrupt){
-			frontRightPressedInterrupt = false;
-			pressedButton = Buttons::FrontRight;
+		else if(sw6_isPressedInterrupt){
+			sw6_isPressedInterrupt = false;
+			pressedButton = Buttons::SW6;
 			updateLastPressedTime();
 		}
 	}
@@ -66,8 +66,8 @@ namespace buttons{
 	}
 	void (*clearPressedEvent)() = clearPressedEvent_Implementation;
 
-	static bool backLeftPressed_Implementation(){
-		PinStatus pinStatus = digitalRead(ButtonBackLeftPin);
+	static bool sw4_pressed_Implementation(){
+		PinStatus pinStatus = digitalRead(SW4_pin);
 		if(pinStatus == LOW){
 			updateLastPressedTime();
 			return true;
@@ -76,10 +76,10 @@ namespace buttons{
 			return false;
 		}
 	}
-	bool (*backLeftPressed)() = backLeftPressed_Implementation;
+	bool (*sw4_pressed)() = sw4_pressed_Implementation;
 
-	static bool backRightPressed_Implementation(){
-		PinStatus pinStatus = digitalRead(ButtonBackRightPin);
+	static bool sw6_pressed_Implementation(){
+		PinStatus pinStatus = digitalRead(SW6_pin);
 		if(pinStatus == LOW){
 			updateLastPressedTime();
 			return true;
@@ -88,23 +88,23 @@ namespace buttons{
 			return false;
 		}
 	}
-	bool (*backRightPressed)() = backRightPressed_Implementation;
+	bool (*sw6_pressed)() = sw6_pressed_Implementation;
 
 
-	static void backLeftPressed_interrupt(){
-		backLeftPressedInterrupt = true;
+	static void sw4_pressedInterrupt(){
+		sw4_isPressedInterrupt = true;
 	}
 
-	static void backRightPressed_interrupt(){
-		backRightPressedInterrupt = true;
+	static void sw6_pressedInterrupt(){
+		sw6_isPressedInterrupt = true;
 	}
 
-	static void frontLeftPressed_interrupt(){
-		frontLeftPressedInterrupt = true;
+	static void sw1_pressedInterrupt(){
+		sw1_isPressedInterrupt = true;
 	}
 
-	static void frontRightPressed_interrupt(){
-		frontRightPressedInterrupt = true;
+	static void sw3_pressedInterrupt(){
+		sw3_isPressedInterrupt = true;
 	}
 
 	static void updateLastPressedTime(){

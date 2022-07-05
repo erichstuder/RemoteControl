@@ -62,13 +62,13 @@ static void buttons_clearPressedEvent_mock(){
 	mock().actualCall("buttons_clearPressedEvent_mock");
 }
 
-static bool buttons_backLeftPressed_mock(){
-	mock().actualCall("buttons_backLeftPressed_mock");
+static bool buttons_sw4_pressed_mock(){
+	mock().actualCall("buttons_sw4_pressed_mock");
 	return mock().boolReturnValue();
 }
 
-static bool buttons_backRightPressed_mock(){
-	mock().actualCall("buttons_backRightPressed_mock");
+static bool buttons_sw6_pressed_mock(){
+	mock().actualCall("buttons_sw6_pressed_mock");
 	return mock().boolReturnValue();
 }
 
@@ -95,8 +95,8 @@ TEST_GROUP(remoteControl_test){
 		UT_PTR_SET(buttons::tick, buttons_tick_mock);
 		UT_PTR_SET(buttons::getPressedEvent, buttons_getPressedEvent_mock);
 		UT_PTR_SET(buttons::clearPressedEvent, buttons_clearPressedEvent_mock);
-		UT_PTR_SET(buttons::backLeftPressed, buttons_backLeftPressed_mock);
-		UT_PTR_SET(buttons::backRightPressed, buttons_backRightPressed_mock);
+		UT_PTR_SET(buttons::sw4_pressed, buttons_sw4_pressed_mock);
+		UT_PTR_SET(buttons::sw6_pressed, buttons_sw6_pressed_mock);
 		UT_PTR_SET(buttons::getLastPressedMillis, buttons_getLastPressedMillis_mock);
 	}
 
@@ -135,6 +135,8 @@ TEST(remoteControl_test, turnTable_tick_noSleep){
 }
 
 TEST(remoteControl_test, turnTable_tick_sleep){
+	uint8_t LED_PWR_pin = 25;
+
 	mock().strictOrder();
 	mock().expectOneCall("millis")
 		.andReturnValue(10003);
@@ -145,57 +147,57 @@ TEST(remoteControl_test, turnTable_tick_sleep){
 	mock().expectOneCall("delay")
 		.withParameter("ms", 1);
 	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 25)
+		.withParameter("pin", LED_PWR_pin)
 		.withParameter("val", 0);
 	mock().expectOneCall("lowPower_sleep_mock");
 	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 25)
+		.withParameter("pin", LED_PWR_pin)
 		.withParameter("val", 1);
 	mock().ignoreOtherCalls();
 
 	remoteControl::tick();
 }
 
-TEST(remoteControl_test, Buttons_BackLeft){
+TEST(remoteControl_test, Buttons_SW4){
 	mock().strictOrder();
 	mock().expectOneCall("buttons_getPressedEvent_mock")
-		.andReturnValue((int)buttons::Buttons::BackLeft);
-	mock().expectOneCall("buttons_backLeftPressed_mock")
+		.andReturnValue((int)buttons::Buttons::SW4);
+	mock().expectOneCall("buttons_sw4_pressed_mock")
 		.andReturnValue(true);
 	mock().expectOneCall("turnTable_isConnected_mock")
 		.andReturnValue(true);
 	mock().expectOneCall("buttons_clearPressedEvent_mock");
 	mock().expectOneCall("turnTable_sendCommand_mock")
 		.withIntParameter("command", (int)turnTable::Command::TurnCounterClockWise);
-	mock().expectOneCall("buttons_backLeftPressed_mock")
+	mock().expectOneCall("buttons_sw4_pressed_mock")
 		.andReturnValue(false);
 	mock().ignoreOtherCalls();
 
 	remoteControl::tick();
 }
 
-TEST(remoteControl_test, Buttons_BackRight){
+TEST(remoteControl_test, Buttons_SW6){
 	mock().strictOrder();
 	mock().expectOneCall("buttons_getPressedEvent_mock")
-		.andReturnValue((int)buttons::Buttons::BackRight);
-	mock().expectOneCall("buttons_backRightPressed_mock")
+		.andReturnValue((int)buttons::Buttons::SW6);
+	mock().expectOneCall("buttons_sw6_pressed_mock")
 		.andReturnValue(true);
 	mock().expectOneCall("turnTable_isConnected_mock")
 		.andReturnValue(true);
 	mock().expectOneCall("buttons_clearPressedEvent_mock");
 	mock().expectOneCall("turnTable_sendCommand_mock")
 		.withIntParameter("command", (int)turnTable::Command::TurnClockWise);
-	mock().expectOneCall("buttons_backRightPressed_mock")
+	mock().expectOneCall("buttons_sw6_pressed_mock")
 		.andReturnValue(false);
 	mock().ignoreOtherCalls();
 
 	remoteControl::tick();
 }
 
-TEST(remoteControl_test, Buttons_FrontLeft){
+TEST(remoteControl_test, Buttons_SW1){
 	mock().strictOrder();
 	mock().expectOneCall("buttons_getPressedEvent_mock")
-		.andReturnValue((int)buttons::Buttons::FrontLeft);
+		.andReturnValue((int)buttons::Buttons::SW1);
 	mock().expectOneCall("buttons_clearPressedEvent_mock");
 	mock().expectOneCall("irRemoteHandler_send_mock")
 		.withIntParameter("command", (int)irRemoteHandler::Command::HiFi_ToggleStandby);
@@ -206,10 +208,10 @@ TEST(remoteControl_test, Buttons_FrontLeft){
 	remoteControl::tick();
 }
 
-TEST(remoteControl_test, Buttons_FrontRight){
+TEST(remoteControl_test, Buttons_SW3){
 	mock().strictOrder();
 	mock().expectOneCall("buttons_getPressedEvent_mock")
-		.andReturnValue((int)buttons::Buttons::FrontRight);
+		.andReturnValue((int)buttons::Buttons::SW3);
 	mock().expectOneCall("buttons_clearPressedEvent_mock");
 	mock().expectOneCall("irRemoteHandler_send_mock")
 		.withIntParameter("command", (int)irRemoteHandler::Command::TV_ToggleStandby);

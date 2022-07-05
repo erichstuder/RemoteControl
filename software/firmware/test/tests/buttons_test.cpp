@@ -4,7 +4,11 @@
 
 typedef void(*InterruptFunction)();
 
-static const uint8_t Pins[] = {6, 5, 4, 3};
+static const uint8_t SW1_pin = 4;
+static const uint8_t SW3_pin = 20;
+static const uint8_t SW4_pin = 3;
+static const uint8_t SW6_pin = 19;
+static const uint8_t Pins[] = {SW1_pin, SW3_pin, SW4_pin, SW6_pin};
 
 TEST_GROUP(buttons_test){
 	void setup(void){}
@@ -69,10 +73,10 @@ TEST(buttons_test, lastPressedTime){
 }
 
 TEST(buttons_test, event){
-	static const buttons::Buttons Buttons[] = {	buttons::Buttons::BackLeft,
-												buttons::Buttons::BackRight,
-												buttons::Buttons::FrontLeft,
-												buttons::Buttons::FrontRight};
+	static const buttons::Buttons Buttons[] = {	buttons::Buttons::SW1,
+												buttons::Buttons::SW3,
+												buttons::Buttons::SW4,
+												buttons::Buttons::SW6,};
 
 	mock().ignoreOtherCalls();
 	buttons::init();
@@ -90,42 +94,42 @@ TEST(buttons_test, event){
 	}
 }
 
-TEST(buttons_test, buttonBackLeftPressed_false){
+TEST(buttons_test, sw4_pressed_false){
 	mock().expectOneCall("digitalRead")
-		.withParameter("pin", 6)
+		.withParameter("pin", SW4_pin)
 		.andReturnValue(1);
-	CHECK_FALSE(buttons::backLeftPressed());
+	CHECK_FALSE(buttons::sw4_pressed());
 }
 
-TEST(buttons_test, buttonBackLeftPressed_true){
+TEST(buttons_test, sw4_pressed_true){
 	const unsigned long Time = 253;
 	mock().expectOneCall("digitalRead")
-		.withParameter("pin", 6)
+		.withParameter("pin", SW4_pin)
 		.andReturnValue(0);
 	mock().expectOneCall("millis")
 		.andReturnValue(Time);
 
-	CHECK(buttons::backLeftPressed());
+	CHECK(buttons::sw4_pressed());
 
 	CHECK_EQUAL(Time, buttons::getLastPressedMillis());
 }
 
-TEST(buttons_test, buttonBackRightPressed_false){
+TEST(buttons_test, sw6_pressed_false){
 	mock().expectOneCall("digitalRead")
-		.withParameter("pin", 5)
+		.withParameter("pin", SW6_pin)
 		.andReturnValue(1);
-	CHECK_FALSE(buttons::backRightPressed());
+	CHECK_FALSE(buttons::sw6_pressed());
 }
 
-TEST(buttons_test, buttonBackRightPressed_true){
+TEST(buttons_test, sw6_pressed_true){
 	const unsigned long Time = 25;
 	mock().expectOneCall("digitalRead")
-		.withParameter("pin", 5)
+		.withParameter("pin", SW6_pin)
 		.andReturnValue(0);
 	mock().expectOneCall("millis")
 		.andReturnValue(Time);
 
-	CHECK(buttons::backRightPressed());
+	CHECK(buttons::sw6_pressed());
 
 	CHECK_EQUAL(Time, buttons::getLastPressedMillis());
 }

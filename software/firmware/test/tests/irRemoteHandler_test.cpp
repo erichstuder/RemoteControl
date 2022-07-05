@@ -4,6 +4,7 @@
 #include "MELECTRONIC__MC_MI_1212__IrRemote.h"
 #include "FINLUX__32FLE845_Eco__IrRemote.h"
 
+static const uint8_t IrPin = 21;
 
 static void melectronic_init_mock(	MELECTRONIC__MC_MI_1212::InfraRed_on infraRed_on,
 									MELECTRONIC__MC_MI_1212::InfraRed_off infraRed_off, 
@@ -33,6 +34,13 @@ static void finlux_send_mock(FINLUX__32FLE845_Eco::Command command){
 		.withIntParameter("command", (int)command);
 }
 
+static void expect_irPinWrite(uint8_t val){
+	mock().expectOneCall("digitalWrite")
+		.withParameter("pin", IrPin)
+		.withParameter("val", val);
+}
+
+
 TEST_GROUP(IrRemoteHandler_test){
 	void setup(void){
 		UT_PTR_SET(MELECTRONIC__MC_MI_1212::init, melectronic_init_mock);
@@ -51,7 +59,7 @@ TEST(IrRemoteHandler_test, init){
 	mock().expectOneCall("melectronic_init_mock");
 	mock().expectOneCall("finlux_init_mock");
 	mock().expectOneCall("pinMode")
-		.withParameter("pin", 9)
+		.withParameter("pin", IrPin)
 		.withParameter("mode", 1);
 
 	irRemoteHandler::init();
@@ -69,9 +77,8 @@ TEST(IrRemoteHandler_test, melectronic_infraRed_on){
 	using namespace MELECTRONIC__MC_MI_1212;
 	InfraRed_on infraRed_on = (InfraRed_on)mock().getData("melectronic_infraRed_on").getFunctionPointerValue();
 
-	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 9)
-		.withParameter("val", 1);
+	expect_irPinWrite(1);
+
 	infraRed_on();
 }
 
@@ -81,9 +88,8 @@ TEST(IrRemoteHandler_test, finlux_infraRed_on){
 	using namespace FINLUX__32FLE845_Eco;
 	InfraRed_on infraRed_on = (InfraRed_on)mock().getData("finlux_infraRed_on").getFunctionPointerValue();
 
-	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 9)
-		.withParameter("val", 1);
+	expect_irPinWrite(1);
+
 	infraRed_on();
 }
 
@@ -93,9 +99,8 @@ TEST(IrRemoteHandler_test, melectronic_infraRed_off){
 	using namespace MELECTRONIC__MC_MI_1212;
 	InfraRed_off infraRed_off = (InfraRed_off)mock().getData("melectronic_infraRed_off").getFunctionPointerValue();
 
-	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 9)
-		.withParameter("val", 0);
+	expect_irPinWrite(0);
+
 	infraRed_off();
 }
 
@@ -105,9 +110,8 @@ TEST(IrRemoteHandler_test, finlux_infraRed_off){
 	using namespace FINLUX__32FLE845_Eco;
 	InfraRed_off infraRed_off = (InfraRed_off)mock().getData("finlux_infraRed_off").getFunctionPointerValue();
 
-	mock().expectOneCall("digitalWrite")
-		.withParameter("pin", 9)
-		.withParameter("val", 0);
+	expect_irPinWrite(0);
+
 	infraRed_off();
 }
 

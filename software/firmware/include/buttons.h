@@ -2,10 +2,10 @@
 
 namespace buttons{
 	enum class Buttons{
-		BackLeft,
-		BackRight,
-		FrontLeft,
-		FrontRight,
+		SW1,
+		SW3,
+		SW4,
+		SW6,
 		None,
 	};
 
@@ -13,7 +13,7 @@ namespace buttons{
 	extern void (*tick)();
 	extern Buttons (*getPressedEvent)();
 	extern void (*clearPressedEvent)();
-	extern bool (*backLeftPressed)();
-	extern bool (*backRightPressed)();
+	extern bool (*sw4_pressed)();
+	extern bool (*sw6_pressed)();
 	extern unsigned long (*getLastPressedMillis)();
 }

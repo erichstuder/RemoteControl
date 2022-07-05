@@ -35,24 +35,24 @@ namespace remoteControl{
 
 	static void handleButtons(){
 		switch(buttons::getPressedEvent()){
-			case(buttons::Buttons::BackLeft):
-				while(buttons::backLeftPressed() && turnTable::isConnected()){
+			case(buttons::Buttons::SW4):
+				while(buttons::sw4_pressed() && turnTable::isConnected()){
 					buttons::clearPressedEvent();
 					turnTable::sendCommand(turnTable::Command::TurnCounterClockWise);
 				}
 				break;
-			case(buttons::Buttons::BackRight):
-				while(buttons::backRightPressed() && turnTable::isConnected()){
+			case(buttons::Buttons::SW6):
+				while(buttons::sw6_pressed() && turnTable::isConnected()){
 					buttons::clearPressedEvent();
 					turnTable::sendCommand(turnTable::Command::TurnClockWise);
 				}
 				break;
-			case(buttons::Buttons::FrontLeft):
+			case(buttons::Buttons::SW1):
 				buttons::clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::HiFi_ToggleStandby);
 				delay(100);
 				break;
-			case(buttons::Buttons::FrontRight):
+			case(buttons::Buttons::SW3):
 				buttons::clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::TV_ToggleStandby);
 				delay(100);

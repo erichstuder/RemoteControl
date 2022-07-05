@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 namespace irRemoteHandler{
-	static const pin_size_t IrPin = 9;
+	static const pin_size_t IrPin = A7;
 
 	static void infraRed_on();
 	static void infraRed_off();
