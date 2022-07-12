@@ -14,11 +14,13 @@ namespace remoteControl{
 
 		irRemoteHandler::init();
 		turnTable::init();
+		bleUsbKeyboard::init();
 		buttons::init();
 	}
 
 	void tick(void){
 		turnTable::tick();
+		bleUsbKeyboard::tick();
 		buttons::tick();
 		handleButtons();
 
@@ -26,6 +28,7 @@ namespace remoteControl{
 			//Disconnecting turnTable before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
 			turnTable::disconnect();
+			bleUsbKeyboard::disconnect();
 			delay(1);
 
 			digitalWrite(LED_PWR, LOW);
