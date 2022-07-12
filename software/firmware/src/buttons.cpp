@@ -6,10 +6,12 @@ namespace buttons{
 	static const pin_size_t SW3_pin = A6;
 	static const pin_size_t SW4_pin = D3;
 	static const pin_size_t SW6_pin = A5;
+	static const pin_size_t SW15_pin = D10;
 	static bool sw1_isPressedInterrupt = false;
 	static bool sw3_isPressedInterrupt = false;
 	static bool sw4_isPressedInterrupt = false;
 	static bool sw6_isPressedInterrupt = false;
+	static bool sw15_isPressedInterrupt = false;
 	static Buttons pressedButton = Buttons::None;
 	static unsigned long lastPressedMillis = 0;
 
@@ -17,6 +19,7 @@ namespace buttons{
 	static void sw3_pressedInterrupt();
 	static void sw4_pressedInterrupt();
 	static void sw6_pressedInterrupt();
+	static void sw15_pressedInterrupt();
 	static void updateLastPressedTime();
 
 	static void init_Implementation(){
@@ -24,11 +27,13 @@ namespace buttons{
 		pinMode(SW3_pin, INPUT_PULLUP);
 		pinMode(SW4_pin, INPUT_PULLUP);
 		pinMode(SW6_pin, INPUT_PULLUP);
+		pinMode(SW15_pin, INPUT_PULLUP);
 
 		attachInterrupt(digitalPinToInterrupt(SW1_pin), sw1_pressedInterrupt, FALLING);
 		attachInterrupt(digitalPinToInterrupt(SW3_pin), sw3_pressedInterrupt, FALLING);
 		attachInterrupt(digitalPinToInterrupt(SW4_pin), sw4_pressedInterrupt, FALLING);
 		attachInterrupt(digitalPinToInterrupt(SW6_pin), sw6_pressedInterrupt, FALLING);
+		attachInterrupt(digitalPinToInterrupt(SW15_pin), sw15_pressedInterrupt, FALLING);
 	}
 	void (*init)() = init_Implementation;
 
@@ -51,6 +56,11 @@ namespace buttons{
 		else if(sw6_isPressedInterrupt){
 			sw6_isPressedInterrupt = false;
 			pressedButton = Buttons::SW6;
+			updateLastPressedTime();
+		}
+		else if(sw15_isPressedInterrupt){
+			sw15_isPressedInterrupt = false;
+			pressedButton = Buttons::SW15;
 			updateLastPressedTime();
 		}
 	}
@@ -90,6 +100,18 @@ namespace buttons{
 	}
 	bool (*sw6_pressed)() = sw6_pressed_Implementation;
 
+	static bool sw15_pressed_Implementation(){
+		PinStatus pinStatus = digitalRead(SW15_pin);
+		if(pinStatus == LOW){
+			updateLastPressedTime();
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
+	bool (*sw15_pressed)() = sw15_pressed_Implementation;
+
 
 	static void sw4_pressedInterrupt(){
 		sw4_isPressedInterrupt = true;
@@ -105,6 +127,10 @@ namespace buttons{
 
 	static void sw3_pressedInterrupt(){
 		sw3_isPressedInterrupt = true;
+	}
+
+	static void sw15_pressedInterrupt(){
+		sw15_isPressedInterrupt = true;
 	}
 
 	static void updateLastPressedTime(){

@@ -6,6 +6,7 @@ namespace buttons{
 		SW3,
 		SW4,
 		SW6,
+		SW15,
 		None,
 	};
 

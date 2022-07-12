@@ -2,6 +2,7 @@
 #include "buttons.h"
 #include "irRemoteHandler.h"
 #include "turnTable.h"
+#include "bleUsbKeyboard.h"
 #include "lowPower.h"
 #include <Arduino.h>
 
@@ -55,6 +56,11 @@ namespace remoteControl{
 			case(buttons::Buttons::SW3):
 				buttons::clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::TV_ToggleStandby);
+				delay(100);
+				break;
+			case(buttons::Buttons::SW15):
+				buttons::clearPressedEvent();
+				bleUsbKeyboard::sendText("Hello World");
 				delay(100);
 				break;
 			default:
