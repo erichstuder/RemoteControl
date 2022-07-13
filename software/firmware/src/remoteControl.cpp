@@ -1,8 +1,7 @@
 #include "remoteControl.h"
 #include "buttons.h"
 #include "irRemoteHandler.h"
-#include "turnTable.h"
-#include "bleUsbKeyboard.h"
+#include "bleRemoteHandler.h"
 #include "lowPower.h"
 #include <Arduino.h>
 
@@ -13,22 +12,22 @@ namespace remoteControl{
 		lowPower::disableSensors();
 
 		irRemoteHandler::init();
-		turnTable::init();
-		bleUsbKeyboard::init();
+		//turnTable::init();
+		//bleUsbKeyboard::init();
 		buttons::init();
 	}
 
 	void tick(void){
-		turnTable::tick();
-		bleUsbKeyboard::tick();
+		//turnTable::tick();
+		//bleUsbKeyboard::tick();
 		buttons::tick();
 		handleButtons();
 
 		if((millis()-buttons::getLastPressedMillis()) > 10000){
 			//Disconnecting turnTable before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
-			turnTable::disconnect();
-			bleUsbKeyboard::disconnect();
+			//turnTable::disconnect();
+			//bleUsbKeyboard::disconnect();
 			delay(1);
 
 			digitalWrite(LED_PWR, LOW);
@@ -38,7 +37,7 @@ namespace remoteControl{
 	}
 
 	static void handleButtons(){
-		switch(buttons::getPressedEvent()){
+		/*switch(buttons::getPressedEvent()){
 			case(buttons::Buttons::SW4):
 				while(buttons::sw4_pressed() && turnTable::isConnected()){
 					buttons::clearPressedEvent();
@@ -69,6 +68,6 @@ namespace remoteControl{
 			default:
 				//do nothing
 				break;
-		}
+		}*/
 	}
 }

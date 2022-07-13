@@ -1,22 +1,26 @@
-//#include "bleRemoteHandler.h"
 #include <Arduino.h>
 #include <ArduinoBLE.h>
+//#include "bleRemoteHandler.h"
+#include "turnTable.h"
+#include "BleUsbKeyboard.h"
+#include "BleRemoteDevice_interface.h"
 
-//TODO: testen, ob man nach mehreren Service UUIDs gleichzeitig scannen kann.
-//TODO: testen, ob man nicht auch nach einem "Gerät" statt nach einem Service scannen kann.
+//TODO: evtl. testen, ob man nach mehreren Service UUIDs gleichzeitig scannen kann.
 //TODO: für die einzelnen Geräte ein Interface erstellen z.B. bleRemoteDevice_interface.cpp
 
-/*
 namespace bleRemoteHandler{
+	static BleUsbKeyboard usbKeyboard;
+
+
 	enum class State{
 		StartScanning,
 		Scanning,
-		Connected,
+		FullyConnected,
 	};
 
 	static State state;
 
-	static bool connectToPeripheral();
+	static bool connectToPeripheral(BleRemoteDevice_interface* device);
 
 	static void init_Implementation(){
 		BLE.begin();
@@ -25,29 +29,60 @@ namespace bleRemoteHandler{
 	void (*init)() = init_Implementation;
 
 	static void tick_Implementation(){
-		const char* UUID = "19b10000-e8f2-537e-4f6c-d104768a1214";
-
 		switch(state){
 			case State::StartScanning:
-				BLE.scanForUuid(UUID, true);
+				BLE.scan(true);
 				state = State::Scanning;
 				break;
-			case State::Scanning:
-				peripheral = BLE.available();
-				if(peripheral && peripheral.localName() == "TurnTable"){
+			case State::Scanning:{
+				BLEDevice bleDevice = BLE.available();
+
+				//TODO: use polymorphism
+				if(bleDevice){
+					bool isName = bleDevice.localName() == usbKeyboard.getLocalName();
+					bool isUuid = bleDevice.advertisedServiceUuid() == usbKeyboard.getServiceUuid();
+					if(isName && isUuid){
+						usbKeyboard.bleDevice = bleDevice;
+						BLE.stopScan();
+						connectToPeripheral(&usbKeyboard);
+						break;
+					}
+
+					/*bool isName = bleDevice.localName() == turnTable::getLocalName();
+					bool isUuid = bleDevice.advertisedServiceUuid() == turnTable::getServiceUuid();
+					if(isName && isUuid){
+						turnTable::bleDevice = bleDevice;
+						BLE.stopScan();
+						connectToPeripheral(turnTable::bleDevice);
+						break;
+					}
+					
+					isName = devibleDevicece.localName() == bleUsbKeyboard::getLocalName();
+					isUuid = bleDevice.advertisedServiceUuid() == bleUsbKeyboard::getServiceUuid();
+					if(isName && isUuid){
+						bleUsbKeyboard::bleDevice = bleDevice;
+						BLE.stopScan();
+						connectToPeripheral(bleUsbKeyboard::bleDevice);
+						break;
+					}*/
+				}
+				
+
+
+				/*if(device && device.localName() == "TurnTable"){
 					BLE.stopScan();
 					if(connectToPeripheral()){
-						state = State::Connected;
+						state = State::FullyConnected;
 					}
 					else{
 						state = State::StartScanning;
 					}
-				}
-				break;
-			case State::Connected:
-				if(!peripheral.connected()){
+				}*/
+				break;}
+			case State::FullyConnected:
+				/*if(!device.connected()){
 					state = State::StartScanning;
-				}
+				}*/
 				break;
 			default:
 				state = State::StartScanning;
@@ -56,29 +91,31 @@ namespace bleRemoteHandler{
 	}
 	void (*tick)() = tick_Implementation;
 
-	static bool connectToPeripheral(){
-		if(!peripheral.connect()){
+	static bool connectToPeripheral(BleRemoteDevice_interface* device){
+		if(!device->bleDevice.connect()){
 			return false;
 		}
 		
-		if(!peripheral.discoverAttributes()){
-			peripheral.disconnect();
+		if(!device->bleDevice.discoverAttributes()){
+			device->bleDevice.disconnect();
 			return false;
 		}
 
-		turnCharacteristic = peripheral.characteristic("19b10001-e8f2-537e-4f6c-d104768a1214");
+		//BLECharacteristic characteristic = device.bleDevice.characteristic("19b10001-e8f2-537e-4f6c-d104768a1214");
+		BLECharacteristic characteristic = device->bleDevice.characteristic(device->getCharacteristicUuid().c_str());
 
-		if(!turnCharacteristic){
-			peripheral.disconnect();
+		if(!characteristic){
+			device->bleDevice.disconnect();
 			return false;
 		}
 
-		if(!turnCharacteristic.canWrite()){
-			peripheral.disconnect();
+		if(!characteristic.canWrite()){
+			device->bleDevice.disconnect();
 			return false;
 		}
+
+		device->bleCharacteristic = characteristic;
 
 		return true;
 	}
 }
-*/

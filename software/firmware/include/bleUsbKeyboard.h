@@ -1,11 +1,13 @@
 #pragma once
 
-#include <Arduino.h>
+#include "BleRemoteDevice_interface.h"
 
-namespace bleUsbKeyboard{
-	extern void (*init)();
-	extern void (*tick)();
-	extern void (*sendText)(String text);
-	extern bool (*isConnected)();
-	extern void (*disconnect)();
-}
+class BleUsbKeyboard : public BleRemoteDevice_interface{
+public:
+	String getLocalName();
+	String getServiceUuid();
+	String getCharacteristicUuid();
+	/*void sendText(String text);
+	bool isConnected();
+	void disconnect();*/
+};
