@@ -3,7 +3,7 @@
 //#include "bleRemoteHandler.h"
 #include "turnTable.h"
 #include "BleUsbKeyboard.h"
-#include "BleRemoteDevice_interface.h"
+#include "IBleRemoteDevice.h"
 
 //TODO: evtl. testen, ob man nach mehreren Service UUIDs gleichzeitig scannen kann.
 //TODO: für die einzelnen Geräte ein Interface erstellen z.B. bleRemoteDevice_interface.cpp
@@ -20,7 +20,7 @@ namespace bleRemoteHandler{
 
 	static State state;
 
-	static bool connectToPeripheral(BleRemoteDevice_interface* device);
+	static bool connectToPeripheral(IBleRemoteDevice* device);
 
 	static void init_Implementation(){
 		BLE.begin();
@@ -91,7 +91,7 @@ namespace bleRemoteHandler{
 	}
 	void (*tick)() = tick_Implementation;
 
-	static bool connectToPeripheral(BleRemoteDevice_interface* device){
+	static bool connectToPeripheral(IBleRemoteDevice* device){
 		if(!device->bleDevice.connect()){
 			return false;
 		}

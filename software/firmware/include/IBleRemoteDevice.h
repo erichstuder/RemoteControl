@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include "ArduinoBLE.h"
 
-class BleRemoteDevice_interface{
+class IBleRemoteDevice{
 public:
 	virtual String getLocalName() = 0;
 	virtual String getServiceUuid() = 0;
