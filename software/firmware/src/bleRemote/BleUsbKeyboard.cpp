@@ -14,35 +14,6 @@ String BleUsbKeyboard::getCharacteristicUuid(){
 	return "19b10001-e8f2-537e-4f6c-d104768a1214";
 }
 
-
-	/*virtual String getServiceUuid() = 0;
-	virtual String getCharacteristicUuid() = 0;*/
-
-/*
-namespace bleUsbKeyboard{
-	enum class State{
-		StartScanning,
-		Scanning,
-		Connected,
-	};
-
-	static BLEDevice bleDevice;
-	static BLECharacteristic textCharacteristic;
-
-
-
-	static void sendText_Implementation(String text){
-		textCharacteristic.writeValue(text.c_str());
-	}
-	void (*sendText)(String text) = sendText_Implementation;
-
-	static bool isConnected_Implementation(){
-		return state == State::Connected;
-	}
-	bool (*isConnected)() = isConnected_Implementation;
-
-	void disconnect_Implementation(){
-		peripheral.disconnect();
-	}
-	void (*disconnect)() = disconnect_Implementation;
-}*/
+void BleUsbKeyboard::sendText(String text){
+	bleCharacteristic.writeValue(text.c_str());
+}

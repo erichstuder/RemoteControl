@@ -23,7 +23,7 @@ namespace remoteControl{
 		if((millis()-buttons::getLastPressedMillis()) > 10000){
 			//Disconnecting BLE devices before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
-			bleRemoteHandler::disconnectAccessories();
+			bleRemoteHandler::disconnectAllAccessories();
 			delay(1);
 
 			digitalWrite(LED_PWR, LOW);
@@ -51,15 +51,15 @@ namespace remoteControl{
 				}
 				break;
 			case(buttons::Buttons::SW6):
-				/*while(buttons::sw6_pressed() && turnTable::isConnected()){
+				while(buttons::sw6_pressed()){
 					buttons::clearPressedEvent();
-					turnTable::sendCommand(turnTable::Command::TurnClockWise);
-				}*/
+					bleRemoteHandler::send(bleRemoteHandler::Command::TurnTable_TurnClockwise);
+				}
 				break;
 			case(buttons::Buttons::SW15):
-				/*buttons::clearPressedEvent();
-				bleUsbKeyboard::sendText("Hello World");
-				delay(100);*/
+				buttons::clearPressedEvent();
+				bleRemoteHandler::send(bleRemoteHandler::Command::Kodi_Up);
+				delay(100);
 				break;
 			default:
 				//do nothing

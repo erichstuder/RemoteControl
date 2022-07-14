@@ -3,17 +3,15 @@
 #include "bleRemoteHandler.h"
 #include "BleAccessory.h"
 #include "TurnTable.h"
-#include "BleUsbKeyboard.h"
+#include "KodiRemote.h"
 
 //TODO: evtl. testen, ob man nach mehreren Service UUIDs gleichzeitig scannen kann.
 //TODO: für die einzelnen Geräte ein Interface erstellen z.B. bleRemoteDevice_interface.cpp
 
 namespace bleRemoteHandler{
 	static TurnTable turnTable;
-	static BleUsbKeyboard bleUsbKeyboard;
-	static std::array<BleAccessory*, 2> accessories = {&turnTable, &bleUsbKeyboard};
-
-	static BleUsbKeyboard usbKeyboard;
+	static KodiRemote kodiRemote;
+	static std::array<BleAccessory*, 2> accessories = {&turnTable, &kodiRemote};
 
 	enum class State{
 		StartScanning,
@@ -23,7 +21,6 @@ namespace bleRemoteHandler{
 
 	static State state;
 
-	//static bool connectToPeripheral(BleAccessory* accessory);
 	static bool allAccessoriesConnected();
 
 	static void init_Implementation(){
@@ -75,34 +72,6 @@ namespace bleRemoteHandler{
 	}
 	void (*tick)() = tick_Implementation;
 
-	/*static bool connectToPeripheral(BleAccessory* accessory){
-		if(!accessory->connect()){
-			return false;
-		}
-		
-		if(!accessory->bleDevice.discoverAttributes()){
-			accessory->bleDevice.disconnect();
-			return false;
-		}
-
-		//BLECharacteristic characteristic = device.bleDevice.characteristic("19b10001-e8f2-537e-4f6c-d104768a1214");
-		BLECharacteristic characteristic = accessory->bleDevice.characteristic(accessory->getCharacteristicUuid().c_str());
-
-		if(!characteristic){
-			accessory->bleDevice.disconnect();
-			return false;
-		}
-
-		if(!characteristic.canWrite()){
-			accessory->bleDevice.disconnect();
-			return false;
-		}
-
-		accessory->bleCharacteristic = characteristic;
-
-		return true;
-	}*/
-
 	static bool allAccessoriesConnected(){
 		for(auto accessory : accessories){
 			if(!accessory->isConnected()){
@@ -112,12 +81,12 @@ namespace bleRemoteHandler{
 		return true;
 	}
 
-	void disconnectAccessories_Implementation(){
+	void disconnectAllAccessories_Implementation(){
 		for(auto accessory : accessories){
 			accessory->disconnect();
 		}
 	}
-	void (*disconnectAccessories)() = disconnectAccessories_Implementation;
+	void (*disconnectAllAccessories)() = disconnectAllAccessories_Implementation;
 
 	static void send_Implementation(Command command){
 		switch(command){
@@ -127,6 +96,8 @@ namespace bleRemoteHandler{
 			case Command::TurnTable_TurnCounterClockwise:
 				turnTable.send(TurnTable::Command::TurnCounterClockwise);
 				break;
+			case Command::Kodi_Up:
+				kodiRemote.send(KodiRemote::Command::Up);
 			default:
 				break;
 		}

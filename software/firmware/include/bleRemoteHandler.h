@@ -4,12 +4,11 @@ namespace bleRemoteHandler{
 	enum class Command{
 		TurnTable_TurnClockwise,
 		TurnTable_TurnCounterClockwise,
-		BleUsbKeyboard_SendText,
+		Kodi_Up,
 	};
 
 	extern void (*init)();
 	extern void (*tick)();
-	//extern bool (*isConnected)();
-	extern void (*disconnectAccessories)();
+	extern void (*disconnectAllAccessories)();
 	extern void (*send)(Command command);
 };

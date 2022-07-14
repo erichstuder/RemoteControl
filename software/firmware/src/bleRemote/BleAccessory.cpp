@@ -37,13 +37,6 @@ bool BleAccessory::connect(){
 	bleCharacteristic = characteristic;
 
 	return true;
-
-/*
-	if(!bleDevice){
-		return false;
-	}
-	return bleDevice.connect();
-}*/
 }
 
 void BleAccessory::disconnect(){

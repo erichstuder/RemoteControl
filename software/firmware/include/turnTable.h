@@ -12,6 +12,4 @@ public:
 	String getServiceUuid();
 	String getCharacteristicUuid();
 	void send(Command command);
-	//bool isConnected();
-	//void disconnect();
 };
