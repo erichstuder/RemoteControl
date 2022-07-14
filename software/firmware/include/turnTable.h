@@ -1,14 +1,17 @@
 #pragma once
 
-namespace turnTable{
-	enum class Command{
-		TurnClockWise,
-		TurnCounterClockWise,
-	};
+#include "BleAccessory.h"
 
-	extern void (*init)();
-	extern void (*tick)();
-	extern void (*sendCommand)(Command command);
-	extern bool (*isConnected)();
-	extern void (*disconnect)();
-}
+class TurnTable : public BleAccessory{
+public:
+	enum class Command{
+		TurnClockwise,
+		TurnCounterClockwise,	
+	};
+	String getLocalName();
+	String getServiceUuid();
+	String getCharacteristicUuid();
+	void send(Command command);
+	//bool isConnected();
+	//void disconnect();
+};

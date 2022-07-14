@@ -3,16 +3,15 @@
 #include <ArduinoBLE.h>
 
 String BleUsbKeyboard::getLocalName(){
-	//bleDevice.
-	return "";
+	return "BLE_to_USB-Keyboard";
 }
 
 String BleUsbKeyboard::getServiceUuid(){
-	return"";
+	return "19b10000-e8f2-537e-4f6c-d104768a1214";
 }
 
 String BleUsbKeyboard::getCharacteristicUuid(){
-	return "";
+	return "19b10001-e8f2-537e-4f6c-d104768a1214";
 }
 
 

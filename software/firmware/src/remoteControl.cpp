@@ -10,24 +10,20 @@ namespace remoteControl{
 
 	void setup(void){
 		lowPower::disableSensors();
-
 		irRemoteHandler::init();
-		//turnTable::init();
-		//bleUsbKeyboard::init();
+		bleRemoteHandler::init();
 		buttons::init();
 	}
 
 	void tick(void){
-		//turnTable::tick();
-		//bleUsbKeyboard::tick();
+		bleRemoteHandler::tick();
 		buttons::tick();
 		handleButtons();
 
 		if((millis()-buttons::getLastPressedMillis()) > 10000){
-			//Disconnecting turnTable before sleep will result in a faster reconnect after wake-up.
+			//Disconnecting BLE devices before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
-			//turnTable::disconnect();
-			//bleUsbKeyboard::disconnect();
+			bleRemoteHandler::disconnectAccessories();
 			delay(1);
 
 			digitalWrite(LED_PWR, LOW);
@@ -37,19 +33,7 @@ namespace remoteControl{
 	}
 
 	static void handleButtons(){
-		/*switch(buttons::getPressedEvent()){
-			case(buttons::Buttons::SW4):
-				while(buttons::sw4_pressed() && turnTable::isConnected()){
-					buttons::clearPressedEvent();
-					turnTable::sendCommand(turnTable::Command::TurnCounterClockWise);
-				}
-				break;
-			case(buttons::Buttons::SW6):
-				while(buttons::sw6_pressed() && turnTable::isConnected()){
-					buttons::clearPressedEvent();
-					turnTable::sendCommand(turnTable::Command::TurnClockWise);
-				}
-				break;
+		switch(buttons::getPressedEvent()){
 			case(buttons::Buttons::SW1):
 				buttons::clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::HiFi_ToggleStandby);
@@ -60,14 +44,26 @@ namespace remoteControl{
 				irRemoteHandler::send(irRemoteHandler::Command::TV_ToggleStandby);
 				delay(100);
 				break;
+			case(buttons::Buttons::SW4):
+				while(buttons::sw4_pressed()){
+					buttons::clearPressedEvent();
+					bleRemoteHandler::send(bleRemoteHandler::Command::TurnTable_TurnCounterClockwise);
+				}
+				break;
+			case(buttons::Buttons::SW6):
+				/*while(buttons::sw6_pressed() && turnTable::isConnected()){
+					buttons::clearPressedEvent();
+					turnTable::sendCommand(turnTable::Command::TurnClockWise);
+				}*/
+				break;
 			case(buttons::Buttons::SW15):
-				buttons::clearPressedEvent();
+				/*buttons::clearPressedEvent();
 				bleUsbKeyboard::sendText("Hello World");
-				delay(100);
+				delay(100);*/
 				break;
 			default:
 				//do nothing
 				break;
-		}*/
+		}
 	}
 }

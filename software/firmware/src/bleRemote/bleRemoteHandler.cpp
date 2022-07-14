@@ -1,26 +1,30 @@
 #include <Arduino.h>
 #include <ArduinoBLE.h>
-//#include "bleRemoteHandler.h"
-#include "turnTable.h"
+#include "bleRemoteHandler.h"
+#include "BleAccessory.h"
+#include "TurnTable.h"
 #include "BleUsbKeyboard.h"
-#include "IBleRemoteDevice.h"
 
 //TODO: evtl. testen, ob man nach mehreren Service UUIDs gleichzeitig scannen kann.
 //TODO: für die einzelnen Geräte ein Interface erstellen z.B. bleRemoteDevice_interface.cpp
 
 namespace bleRemoteHandler{
-	static BleUsbKeyboard usbKeyboard;
+	static TurnTable turnTable;
+	static BleUsbKeyboard bleUsbKeyboard;
+	static std::array<BleAccessory*, 2> accessories = {&turnTable, &bleUsbKeyboard};
 
+	static BleUsbKeyboard usbKeyboard;
 
 	enum class State{
 		StartScanning,
 		Scanning,
-		FullyConnected,
+		AllConnected,
 	};
 
 	static State state;
 
-	static bool connectToPeripheral(IBleRemoteDevice* device);
+	//static bool connectToPeripheral(BleAccessory* accessory);
+	static bool allAccessoriesConnected();
 
 	static void init_Implementation(){
 		BLE.begin();
@@ -36,53 +40,33 @@ namespace bleRemoteHandler{
 				break;
 			case State::Scanning:{
 				BLEDevice bleDevice = BLE.available();
-
-				//TODO: use polymorphism
 				if(bleDevice){
-					bool isName = bleDevice.localName() == usbKeyboard.getLocalName();
-					bool isUuid = bleDevice.advertisedServiceUuid() == usbKeyboard.getServiceUuid();
-					if(isName && isUuid){
-						usbKeyboard.bleDevice = bleDevice;
-						BLE.stopScan();
-						connectToPeripheral(&usbKeyboard);
-						break;
+					for(auto accessory : accessories){
+						if(!accessory->isConnected()){
+							bool isName = bleDevice.localName() == accessory->getLocalName();
+							bool isUuid = bleDevice.advertisedServiceUuid() == accessory->getServiceUuid();
+							if(isName && isUuid){
+								BLE.stopScan();
+								accessory->setBleDevice(bleDevice);
+								accessory->connect();
+								break;
+							}
+						}
 					}
 
-					/*bool isName = bleDevice.localName() == turnTable::getLocalName();
-					bool isUuid = bleDevice.advertisedServiceUuid() == turnTable::getServiceUuid();
-					if(isName && isUuid){
-						turnTable::bleDevice = bleDevice;
-						BLE.stopScan();
-						connectToPeripheral(turnTable::bleDevice);
-						break;
-					}
-					
-					isName = devibleDevicece.localName() == bleUsbKeyboard::getLocalName();
-					isUuid = bleDevice.advertisedServiceUuid() == bleUsbKeyboard::getServiceUuid();
-					if(isName && isUuid){
-						bleUsbKeyboard::bleDevice = bleDevice;
-						BLE.stopScan();
-						connectToPeripheral(bleUsbKeyboard::bleDevice);
-						break;
-					}*/
-				}
-				
-
-
-				/*if(device && device.localName() == "TurnTable"){
-					BLE.stopScan();
-					if(connectToPeripheral()){
-						state = State::FullyConnected;
+					if(allAccessoriesConnected()){
+						state = State::AllConnected;
 					}
 					else{
 						state = State::StartScanning;
 					}
-				}*/
-				break;}
-			case State::FullyConnected:
-				/*if(!device.connected()){
+				}
+				break;
+			}
+			case State::AllConnected:
+				if(!allAccessoriesConnected()){
 					state = State::StartScanning;
-				}*/
+				}
 				break;
 			default:
 				state = State::StartScanning;
@@ -91,31 +75,61 @@ namespace bleRemoteHandler{
 	}
 	void (*tick)() = tick_Implementation;
 
-	static bool connectToPeripheral(IBleRemoteDevice* device){
-		if(!device->bleDevice.connect()){
+	/*static bool connectToPeripheral(BleAccessory* accessory){
+		if(!accessory->connect()){
 			return false;
 		}
 		
-		if(!device->bleDevice.discoverAttributes()){
-			device->bleDevice.disconnect();
+		if(!accessory->bleDevice.discoverAttributes()){
+			accessory->bleDevice.disconnect();
 			return false;
 		}
 
 		//BLECharacteristic characteristic = device.bleDevice.characteristic("19b10001-e8f2-537e-4f6c-d104768a1214");
-		BLECharacteristic characteristic = device->bleDevice.characteristic(device->getCharacteristicUuid().c_str());
+		BLECharacteristic characteristic = accessory->bleDevice.characteristic(accessory->getCharacteristicUuid().c_str());
 
 		if(!characteristic){
-			device->bleDevice.disconnect();
+			accessory->bleDevice.disconnect();
 			return false;
 		}
 
 		if(!characteristic.canWrite()){
-			device->bleDevice.disconnect();
+			accessory->bleDevice.disconnect();
 			return false;
 		}
 
-		device->bleCharacteristic = characteristic;
+		accessory->bleCharacteristic = characteristic;
 
 		return true;
+	}*/
+
+	static bool allAccessoriesConnected(){
+		for(auto accessory : accessories){
+			if(!accessory->isConnected()){
+				return false;
+			}
+		}
+		return true;
 	}
+
+	void disconnectAccessories_Implementation(){
+		for(auto accessory : accessories){
+			accessory->disconnect();
+		}
+	}
+	void (*disconnectAccessories)() = disconnectAccessories_Implementation;
+
+	static void send_Implementation(Command command){
+		switch(command){
+			case Command::TurnTable_TurnClockwise:
+				turnTable.send(TurnTable::Command::TurnClockwise);
+				break;
+			case Command::TurnTable_TurnCounterClockwise:
+				turnTable.send(TurnTable::Command::TurnCounterClockwise);
+				break;
+			default:
+				break;
+		}
+	}
+	void (*send)(Command command) = send_Implementation;
 }

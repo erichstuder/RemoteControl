@@ -1,9 +1,15 @@
 #pragma once
 
 namespace bleRemoteHandler{
+	enum class Command{
+		TurnTable_TurnClockwise,
+		TurnTable_TurnCounterClockwise,
+		BleUsbKeyboard_SendText,
+	};
+
 	extern void (*init)();
 	extern void (*tick)();
-	//extern void (*sendCommand)(Command command);
 	//extern bool (*isConnected)();
-	//extern void (*disconnect)();
+	extern void (*disconnectAccessories)();
+	extern void (*send)(Command command);
 };

@@ -1,7 +1,38 @@
-#include "turnTable.h"
+#include "TurnTable.h"
 #include <Arduino.h>
 #include <ArduinoBLE.h>
 
+String TurnTable::getLocalName(){
+	return "TurnTable";
+}
+
+String TurnTable::getServiceUuid(){
+	return "19b10000-e8f2-537e-4f6c-d104768a1214";
+}
+
+String TurnTable::getCharacteristicUuid(){
+	return "19b10001-e8f2-537e-4f6c-d104768a1214";
+}
+
+void TurnTable::send(Command command){
+	if(!isConnected()){
+		return;
+	}
+
+	switch(command){
+		case Command::TurnClockwise:
+			bleCharacteristic.writeValue((byte)0x01);
+			break;
+		case Command::TurnCounterClockwise:
+			bleCharacteristic.writeValue((byte)0x02);
+			break;
+		default:
+			//do nothing
+			break;
+	}
+}
+
+/*
 namespace turnTable{
 	enum class State{
 		StartScanning,
@@ -103,3 +134,4 @@ namespace turnTable{
 	}
 	void (*disconnect)() = disconnect_Implementation;
 }
+*/

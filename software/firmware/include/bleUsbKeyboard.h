@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IBleRemoteDevice.h"
+#include "BleAccessory.h"
 
-class BleUsbKeyboard : public IBleRemoteDevice{
+class BleUsbKeyboard : public BleAccessory{
 public:
 	String getLocalName();
 	String getServiceUuid();
