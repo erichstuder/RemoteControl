@@ -12,15 +12,15 @@ namespace remoteControl{
 		lowPower::disableSensors();
 		irRemoteHandler::init();
 		bleRemoteHandler::init();
-		buttons::init();
+		buttons_init();
 	}
 
 	void tick(void){
 		bleRemoteHandler::tick();
-		buttons::tick();
+		buttons_tick();
 		handleButtons();
 
-		if((millis()-buttons::getLastPressedMillis()) > 10000){
+		if((millis()-buttons_getLastPressedMillis()) > 10000){
 			//Disconnecting BLE devices before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
 			bleRemoteHandler::disconnectAllAccessories();
@@ -33,31 +33,31 @@ namespace remoteControl{
 	}
 
 	static void handleButtons(){
-		switch(buttons::getPressedEvent()){
-			case(buttons::Buttons::SW1):
-				buttons::clearPressedEvent();
+		switch(buttons_getPressedEvent()){
+			case(ButtonId_SW1):
+				buttons_clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::HiFi_ToggleStandby);
 				delay(100);
 				break;
-			case(buttons::Buttons::SW3):
-				buttons::clearPressedEvent();
+			case(ButtonId_SW3):
+				buttons_clearPressedEvent();
 				irRemoteHandler::send(irRemoteHandler::Command::TV_ToggleStandby);
 				delay(100);
 				break;
-			case(buttons::Buttons::SW4):
-				while(buttons::sw4_pressed()){
-					buttons::clearPressedEvent();
+			case(ButtonId_SW4):
+				while(buttons_isPressed(ButtonId_SW4)){
+					buttons_clearPressedEvent();
 					bleRemoteHandler::send(bleRemoteHandler::Command::TurnTable_TurnCounterClockwise);
 				}
 				break;
-			case(buttons::Buttons::SW6):
-				while(buttons::sw6_pressed()){
-					buttons::clearPressedEvent();
+			case(ButtonId_SW6):
+				while(buttons_isPressed(ButtonId_SW6)){
+					buttons_clearPressedEvent();
 					bleRemoteHandler::send(bleRemoteHandler::Command::TurnTable_TurnClockwise);
 				}
 				break;
-			case(buttons::Buttons::SW15):
-				buttons::clearPressedEvent();
+			case(ButtonId_SW15):
+				buttons_clearPressedEvent();
 				bleRemoteHandler::send(bleRemoteHandler::Command::Kodi_Up);
 				delay(100);
 				break;
