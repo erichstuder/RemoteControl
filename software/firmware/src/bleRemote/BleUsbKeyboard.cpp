@@ -15,5 +15,8 @@ String BleUsbKeyboard::getCharacteristicUuid(){
 }
 
 void BleUsbKeyboard::sendText(String text){
+	if(!isConnected()){
+		return;
+	}
 	bleCharacteristic.writeValue(text.c_str());
 }

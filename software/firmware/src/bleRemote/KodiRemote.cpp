@@ -5,5 +5,7 @@ void KodiRemote::send(Command command){
 		case KodiRemote::Command::Up:
 			sendText("Todo: insert UpKey");
 			break;
+		default:
+			break;
 	}
 }
