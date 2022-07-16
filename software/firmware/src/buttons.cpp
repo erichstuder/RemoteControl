@@ -40,13 +40,12 @@ namespace buttons{
 		{.id=ButtonId::SW7,  .pin=D2,  .hadPressedInterrupt=false, .pressedInterrupt = sw7_pressedInterrupt },
 		{.id=ButtonId::SW8,  .pin=D7,  .hadPressedInterrupt=false, .pressedInterrupt = sw8_pressedInterrupt },
 		{.id=ButtonId::SW9,  .pin=D12, .hadPressedInterrupt=false, .pressedInterrupt = sw9_pressedInterrupt },*/
-		{.id=ButtonId::SW10, .pin=D1,/*D0*/ .hadPressedInterrupt=false, .pressedInterrupt = sw10_pressedInterrupt},
+		{.id=ButtonId::SW10, .pin=D1,  .hadPressedInterrupt=false, .pressedInterrupt = sw10_pressedInterrupt},
 		{.id=ButtonId::SW11, .pin=D6,  .hadPressedInterrupt=false, .pressedInterrupt = sw11_pressedInterrupt},
 		{.id=ButtonId::SW12, .pin=D11, .hadPressedInterrupt=false, .pressedInterrupt = sw12_pressedInterrupt},
-		{.id=ButtonId::SW13, .pin=D0,/*D1*/  .hadPressedInterrupt=false, .pressedInterrupt = sw13_pressedInterrupt},
+		{.id=ButtonId::SW13, .pin=D0,  .hadPressedInterrupt=false, .pressedInterrupt = sw13_pressedInterrupt},
 		{.id=ButtonId::SW14, .pin=D5,  .hadPressedInterrupt=false, .pressedInterrupt = sw14_pressedInterrupt},
 		{.id=ButtonId::SW15, .pin=D10, .hadPressedInterrupt=false, .pressedInterrupt = sw15_pressedInterrupt}
-		//TODO: D0 and D1 are somehow interchanged
 	};
 
 
