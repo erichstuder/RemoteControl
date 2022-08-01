@@ -24,7 +24,7 @@ namespace remoteControl{
 	// Don't use: XXXXXXXX-0000-1000-8000-00805F9B34FB
 	// The UUIDs are left as is given by the code examples for the moment.
 	static BLEService remoteControlService("19B10000-E8F2-537E-4F6C-D104768A1214");
-	static BLEByteCharacteristic remoteControlCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLENotify);
+	static BLEByteCharacteristic remoteControlCharacteristic("19B10001-E8F2-537E-4F6C-D104768A1214", BLERead|BLENotify);
 	static BLEDevice remoteControl;
 
 	static void handleButtons();
@@ -50,17 +50,19 @@ namespace remoteControl{
 		//bleRemoteHandler::tick();
 		buttons::tick();
 		handleButtons();
+		BLE.central().poll();
+		//delay(100);
 
-		/*if((millis()-buttons::getLastPressedMillis()) > 10000){
+		if((millis()-buttons::getLastPressedMillis()) > 10000){
 			//Disconnecting BLE devices before sleep will result in a faster reconnect after wake-up.
 			//After a disconnect there is a delay necessary. Probably to let other tasks run and shutdown things correctly.
-			bleRemoteHandler::disconnectAllAccessories();
-			delay(1);
+			//bleRemoteHandler::disconnectAllAccessories();
+			//delay(1);
 
 			digitalWrite(LED_PWR, LOW);
 			lowPower::sleep();
 			digitalWrite(LED_PWR, HIGH);
-		}*/
+		}
 	}
 
 	static void handleButtons(){
@@ -94,9 +96,8 @@ namespace remoteControl{
 				break;*/
 			case(buttons::ButtonId::SW8):
 				remoteControlCharacteristic.writeValue((byte)Command::Up);
-				/*buttons::clearPressedEvent();
-				bleRemoteHandler::send(bleRemoteHandler::Command::Kodi_Up);*/
-				delay(100);
+				buttons::clearPressedEvent();
+				/*bleRemoteHandler::send(bleRemoteHandler::Command::Kodi_Up);*/
 				break;
 			default:
 				//do nothing
