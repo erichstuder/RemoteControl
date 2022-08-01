@@ -1,19 +1,18 @@
 #pragma once
 
+#include <Arduino.h>
+
 namespace buttons{
-	enum class Buttons{
-		SW1,
-		SW3,
-		SW4,
-		SW6,
-		None,
-	};
+	enum class ButtonId{
+		SW1, SW2, SW3, SW4, SW5,
+		SW6, SW7, SW8, SW9, SW10,
+		SW11, SW12, SW13, SW14, SW15, None
+	} ;
 
 	extern void (*init)();
 	extern void (*tick)();
-	extern Buttons (*getPressedEvent)();
+	extern ButtonId (*getPressedEvent)();
 	extern void (*clearPressedEvent)();
-	extern bool (*sw4_pressed)();
-	extern bool (*sw6_pressed)();
+	bool isPressed(ButtonId id);
 	extern unsigned long (*getLastPressedMillis)();
 }

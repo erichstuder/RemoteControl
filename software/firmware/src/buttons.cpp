@@ -1,115 +1,117 @@
-#include <Arduino.h>
 #include "buttons.h"
+#include <Arduino.h>
 
 namespace buttons{
-	static const pin_size_t SW1_pin = D4;
-	static const pin_size_t SW3_pin = A6;
-	static const pin_size_t SW4_pin = D3;
-	static const pin_size_t SW6_pin = A5;
-	static bool sw1_isPressedInterrupt = false;
-	static bool sw3_isPressedInterrupt = false;
-	static bool sw4_isPressedInterrupt = false;
-	static bool sw6_isPressedInterrupt = false;
-	static Buttons pressedButton = Buttons::None;
+	typedef struct{
+		ButtonId id;
+		pin_size_t pin;
+		bool hadPressedInterrupt;
+		void (*pressedInterrupt)();
+	}Button;
+
+	static Button* getButtonById(ButtonId id);
+	static void updateLastPressedTime();
+	static ButtonId pressedButton = ButtonId::None;
 	static unsigned long lastPressedMillis = 0;
 
-	static void sw1_pressedInterrupt();
-	static void sw3_pressedInterrupt();
-	static void sw4_pressedInterrupt();
-	static void sw6_pressedInterrupt();
-	static void updateLastPressedTime();
+	static void sw1_pressedInterrupt() { getButtonById(ButtonId::SW1)->hadPressedInterrupt  = true; }
+	static void sw2_pressedInterrupt() { getButtonById(ButtonId::SW2)->hadPressedInterrupt  = true; }
+	static void sw3_pressedInterrupt() { getButtonById(ButtonId::SW3)->hadPressedInterrupt  = true; }
+	static void sw4_pressedInterrupt() { getButtonById(ButtonId::SW4)->hadPressedInterrupt  = true; }
+	static void sw5_pressedInterrupt() { getButtonById(ButtonId::SW5)->hadPressedInterrupt  = true; }
+	static void sw6_pressedInterrupt() { getButtonById(ButtonId::SW6)->hadPressedInterrupt  = true; }
+	static void sw7_pressedInterrupt() { getButtonById(ButtonId::SW7)->hadPressedInterrupt  = true; }
+	static void sw8_pressedInterrupt() { getButtonById(ButtonId::SW8)->hadPressedInterrupt  = true; }
+	static void sw9_pressedInterrupt() { getButtonById(ButtonId::SW9)->hadPressedInterrupt  = true; }
+	static void sw10_pressedInterrupt(){ getButtonById(ButtonId::SW10)->hadPressedInterrupt = true; }
+	static void sw11_pressedInterrupt(){ getButtonById(ButtonId::SW11)->hadPressedInterrupt = true; }
+	static void sw12_pressedInterrupt(){ getButtonById(ButtonId::SW12)->hadPressedInterrupt = true; }
+	static void sw13_pressedInterrupt(){ getButtonById(ButtonId::SW13)->hadPressedInterrupt = true; }
+	static void sw14_pressedInterrupt(){ getButtonById(ButtonId::SW14)->hadPressedInterrupt = true; }
+	static void sw15_pressedInterrupt(){ getButtonById(ButtonId::SW15)->hadPressedInterrupt = true; }
+
+	static Button buttons[] = {
+		{.id=ButtonId::SW1,  .pin=D4,  .hadPressedInterrupt=false, .pressedInterrupt = sw1_pressedInterrupt },
+		{.id=ButtonId::SW2,  .pin=D9,  .hadPressedInterrupt=false, .pressedInterrupt = sw2_pressedInterrupt },
+		{.id=ButtonId::SW3,  .pin=A6,  .hadPressedInterrupt=false, .pressedInterrupt = sw3_pressedInterrupt },
+		{.id=ButtonId::SW4,  .pin=D3,  .hadPressedInterrupt=false, .pressedInterrupt = sw4_pressedInterrupt },
+		//{.id=ButtonId::SW5,  .pin=D8,  .hadPressedInterrupt=false, .pressedInterrupt = sw5_pressedInterrupt },
+		{.id=ButtonId::SW6,  .pin=A5,  .hadPressedInterrupt=false, .pressedInterrupt = sw6_pressedInterrupt },
+		//{.id=ButtonId::SW7,  .pin=D2,  .hadPressedInterrupt=false, .pressedInterrupt = sw7_pressedInterrupt },
+		{.id=ButtonId::SW8,  .pin=D7,  .hadPressedInterrupt=false, .pressedInterrupt = sw8_pressedInterrupt },
+		//{.id=ButtonId::SW9,  .pin=D12, .hadPressedInterrupt=false, .pressedInterrupt = sw9_pressedInterrupt },
+		/*{.id=ButtonId::SW10, .pin=D1,  .hadPressedInterrupt=false, .pressedInterrupt = sw10_pressedInterrupt},
+		{.id=ButtonId::SW11, .pin=D6,  .hadPressedInterrupt=false, .pressedInterrupt = sw11_pressedInterrupt},
+		{.id=ButtonId::SW12, .pin=D11, .hadPressedInterrupt=false, .pressedInterrupt = sw12_pressedInterrupt},
+		{.id=ButtonId::SW13, .pin=D0,  .hadPressedInterrupt=false, .pressedInterrupt = sw13_pressedInterrupt},
+		{.id=ButtonId::SW14, .pin=D5,  .hadPressedInterrupt=false, .pressedInterrupt = sw14_pressedInterrupt},
+		{.id=ButtonId::SW15, .pin=D10, .hadPressedInterrupt=false, .pressedInterrupt = sw15_pressedInterrupt}*/
+	};
+
 
 	static void init_Implementation(){
-		pinMode(SW1_pin, INPUT_PULLUP);
-		pinMode(SW3_pin, INPUT_PULLUP);
-		pinMode(SW4_pin, INPUT_PULLUP);
-		pinMode(SW6_pin, INPUT_PULLUP);
-
-		attachInterrupt(digitalPinToInterrupt(SW1_pin), sw1_pressedInterrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(SW3_pin), sw3_pressedInterrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(SW4_pin), sw4_pressedInterrupt, FALLING);
-		attachInterrupt(digitalPinToInterrupt(SW6_pin), sw6_pressedInterrupt, FALLING);
+		for(unsigned int n=0; n<sizeof(buttons)/sizeof(buttons[0]); n++){
+			Button* button = &(buttons[n]);
+			pinMode(button->pin, INPUT_PULLUP);
+			attachInterrupt(digitalPinToInterrupt(button->pin), button->pressedInterrupt, FALLING);
+		}
 	}
 	void (*init)() = init_Implementation;
 
+
 	static void tick_Implementation(){
-		if(sw1_isPressedInterrupt){
-			sw1_isPressedInterrupt = false;
-			pressedButton = Buttons::SW1;
-			updateLastPressedTime();
-		}
-		else if(sw3_isPressedInterrupt){
-			sw3_isPressedInterrupt = false;
-			pressedButton = Buttons::SW3;
-			updateLastPressedTime();
-		}
-		else if(sw4_isPressedInterrupt){
-			sw4_isPressedInterrupt = false;
-			pressedButton = Buttons::SW4;
-			updateLastPressedTime();
-		}
-		else if(sw6_isPressedInterrupt){
-			sw6_isPressedInterrupt = false;
-			pressedButton = Buttons::SW6;
-			updateLastPressedTime();
+		for(unsigned int n=0; n<sizeof(buttons)/sizeof(buttons[0]); n++){
+			Button* button = &(buttons[n]);
+			if(button->hadPressedInterrupt){
+				button->hadPressedInterrupt = false;
+				pressedButton = button->id;
+				updateLastPressedTime();
+			}
 		}
 	}
 	void (*tick)() = tick_Implementation;
 
-	static Buttons getPressedEvent_Implementation(){
+
+	static ButtonId getPressedEvent_Implementation(){
 		return pressedButton;
 	}
-	Buttons (*getPressedEvent)() = getPressedEvent_Implementation;
+	ButtonId (*getPressedEvent)() = getPressedEvent_Implementation;
+
 
 	static void clearPressedEvent_Implementation(){
-		pressedButton = Buttons::None;
+		pressedButton = ButtonId::None;
 	}
 	void (*clearPressedEvent)() = clearPressedEvent_Implementation;
 
-	static bool sw4_pressed_Implementation(){
-		PinStatus pinStatus = digitalRead(SW4_pin);
-		if(pinStatus == LOW){
+
+	static Button* getButtonById(ButtonId id){
+		for(unsigned int n=0; n<sizeof(buttons)/sizeof(buttons[0]); n++){
+			Button* button = &(buttons[n]);
+			if(button->id == id){
+				return button;
+			}
+		}
+		return NULL;
+	}
+
+
+	bool isPressed(ButtonId id){
+		Button* button = getButtonById(id);
+		if(button == NULL){
+			return false;
+		}
+		if(digitalRead(button->pin) == LOW){
 			updateLastPressedTime();
 			return true;
 		}
-		else{
-			return false;
-		}
-	}
-	bool (*sw4_pressed)() = sw4_pressed_Implementation;
-
-	static bool sw6_pressed_Implementation(){
-		PinStatus pinStatus = digitalRead(SW6_pin);
-		if(pinStatus == LOW){
-			updateLastPressedTime();
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
-	bool (*sw6_pressed)() = sw6_pressed_Implementation;
-
-
-	static void sw4_pressedInterrupt(){
-		sw4_isPressedInterrupt = true;
+		return false;
 	}
 
-	static void sw6_pressedInterrupt(){
-		sw6_isPressedInterrupt = true;
-	}
-
-	static void sw1_pressedInterrupt(){
-		sw1_isPressedInterrupt = true;
-	}
-
-	static void sw3_pressedInterrupt(){
-		sw3_isPressedInterrupt = true;
-	}
 
 	static void updateLastPressedTime(){
 		lastPressedMillis = millis();
 	}
+
 
 	static unsigned long getLastPressedMillis_Implementation(){
 		return lastPressedMillis;
