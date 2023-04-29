@@ -1214,11 +1214,6 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 5c7e672a-b29f-4fc2-b038-a125167a7c28)
   )
-
-  (wire (pts (xy 234.95 111.76) (xy 251.46 111.76))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid 6211cda6-4086-4269-a151-34f7a67e6d57)
-  )
   (bus (pts (xy 185.42 96.52) (xy 185.42 99.06))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 63226103-3326-4b54-b375-3cf9c4866d92)
