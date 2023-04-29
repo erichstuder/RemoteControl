@@ -11,7 +11,7 @@ jobs:
     uses: ./.github/workflows/mainboard_create_fabrication_data.yml
     
   create_release:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     needs: create_fabrication_data
     steps:
       - name: create release
