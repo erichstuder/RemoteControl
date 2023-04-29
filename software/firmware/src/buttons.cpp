@@ -18,17 +18,17 @@ namespace buttons{
 	static void sw2_pressedInterrupt() { getButtonById(ButtonId::SW2)->hadPressedInterrupt  = true; }
 	static void sw3_pressedInterrupt() { getButtonById(ButtonId::SW3)->hadPressedInterrupt  = true; }
 	static void sw4_pressedInterrupt() { getButtonById(ButtonId::SW4)->hadPressedInterrupt  = true; }
-	static void sw5_pressedInterrupt() { getButtonById(ButtonId::SW5)->hadPressedInterrupt  = true; }
+	//static void sw5_pressedInterrupt() { getButtonById(ButtonId::SW5)->hadPressedInterrupt  = true; }
 	static void sw6_pressedInterrupt() { getButtonById(ButtonId::SW6)->hadPressedInterrupt  = true; }
-	static void sw7_pressedInterrupt() { getButtonById(ButtonId::SW7)->hadPressedInterrupt  = true; }
+	//static void sw7_pressedInterrupt() { getButtonById(ButtonId::SW7)->hadPressedInterrupt  = true; }
 	static void sw8_pressedInterrupt() { getButtonById(ButtonId::SW8)->hadPressedInterrupt  = true; }
-	static void sw9_pressedInterrupt() { getButtonById(ButtonId::SW9)->hadPressedInterrupt  = true; }
-	static void sw10_pressedInterrupt(){ getButtonById(ButtonId::SW10)->hadPressedInterrupt = true; }
-	static void sw11_pressedInterrupt(){ getButtonById(ButtonId::SW11)->hadPressedInterrupt = true; }
-	static void sw12_pressedInterrupt(){ getButtonById(ButtonId::SW12)->hadPressedInterrupt = true; }
-	static void sw13_pressedInterrupt(){ getButtonById(ButtonId::SW13)->hadPressedInterrupt = true; }
-	static void sw14_pressedInterrupt(){ getButtonById(ButtonId::SW14)->hadPressedInterrupt = true; }
-	static void sw15_pressedInterrupt(){ getButtonById(ButtonId::SW15)->hadPressedInterrupt = true; }
+	//static void sw9_pressedInterrupt() { getButtonById(ButtonId::SW9)->hadPressedInterrupt  = true; }
+	//static void sw10_pressedInterrupt(){ getButtonById(ButtonId::SW10)->hadPressedInterrupt = true; }
+	//static void sw11_pressedInterrupt(){ getButtonById(ButtonId::SW11)->hadPressedInterrupt = true; }
+	//static void sw12_pressedInterrupt(){ getButtonById(ButtonId::SW12)->hadPressedInterrupt = true; }
+	//static void sw13_pressedInterrupt(){ getButtonById(ButtonId::SW13)->hadPressedInterrupt = true; }
+	//static void sw14_pressedInterrupt(){ getButtonById(ButtonId::SW14)->hadPressedInterrupt = true; }
+	//static void sw15_pressedInterrupt(){ getButtonById(ButtonId::SW15)->hadPressedInterrupt = true; }
 
 	static Button buttons[] = {
 		{.id=ButtonId::SW1,  .pin=D4,  .hadPressedInterrupt=false, .pressedInterrupt = sw1_pressedInterrupt },

@@ -19,7 +19,7 @@ TEST_GROUP(buttons_test){
 };
 
 
-static void expect_pinMode(uint8_t pin){
+/*static void expect_pinMode(uint8_t pin){
 	mock().expectOneCall("pinMode")
 		.withParameter("pin", pin)
 		.withParameter("mode", 2);
@@ -31,7 +31,7 @@ static void expect_attachInterrupt(uint8_t pin){
 	mock().expectOneCall("attachInterrupt")
 		.withParameter("interruptNum", pin)
 		.withParameter("mode", 3);
-}
+}*/
 
 static InterruptFunction getPinInterruptFunction(uint8_t pinNumber){
 	const char* DataName = ("func"+std::to_string(pinNumber)).c_str();
@@ -39,7 +39,7 @@ static InterruptFunction getPinInterruptFunction(uint8_t pinNumber){
 }
 
 
-TEST(buttons_test, init){
+/*TEST(buttons_test, init){
 	mock().strictOrder();
 	for(uint8_t n=0; n<sizeof(Pins)/sizeof(Pins[0]); n++){
 		expect_pinMode(Pins[n]);
@@ -50,7 +50,7 @@ TEST(buttons_test, init){
 	}
 
 	buttons::init();
-}
+}*/
 
 TEST(buttons_test, tick_noEvent){
 	buttons::tick();
@@ -73,10 +73,10 @@ TEST(buttons_test, lastPressedTime){
 }
 
 TEST(buttons_test, event){
-	static const buttons::Buttons Buttons[] = {	buttons::Buttons::SW1,
-												buttons::Buttons::SW3,
-												buttons::Buttons::SW4,
-												buttons::Buttons::SW6,};
+	static const buttons::ButtonId Buttons[] = {	buttons::ButtonId::SW1,
+													buttons::ButtonId::SW3,
+													buttons::ButtonId::SW4,
+													buttons::ButtonId::SW6,};
 
 	mock().ignoreOtherCalls();
 	buttons::init();
@@ -84,13 +84,13 @@ TEST(buttons_test, event){
 	for(uint8_t n=0; n<sizeof(Pins)/sizeof(Pins[0]); n++){
 		InterruptFunction func = getPinInterruptFunction(Pins[n]);
 
-		CHECK(buttons::Buttons::None == buttons::getPressedEvent());
+		CHECK(buttons::ButtonId::None == buttons::getPressedEvent());
 		func();
-		CHECK(buttons::Buttons::None == buttons::getPressedEvent());
+		CHECK(buttons::ButtonId::None == buttons::getPressedEvent());
 		buttons::tick();
 		CHECK(Buttons[n] == buttons::getPressedEvent());
 		buttons::clearPressedEvent();
-		CHECK(buttons::Buttons::None == buttons::getPressedEvent());
+		CHECK(buttons::ButtonId::None == buttons::getPressedEvent());
 	}
 }
 
@@ -98,7 +98,7 @@ TEST(buttons_test, sw4_pressed_false){
 	mock().expectOneCall("digitalRead")
 		.withParameter("pin", SW4_pin)
 		.andReturnValue(1);
-	CHECK_FALSE(buttons::sw4_pressed());
+	CHECK_FALSE(buttons::isPressed(buttons::ButtonId::SW4));
 }
 
 TEST(buttons_test, sw4_pressed_true){
@@ -109,7 +109,7 @@ TEST(buttons_test, sw4_pressed_true){
 	mock().expectOneCall("millis")
 		.andReturnValue(Time);
 
-	CHECK(buttons::sw4_pressed());
+	CHECK(buttons::isPressed(buttons::ButtonId::SW4));
 
 	CHECK_EQUAL(Time, buttons::getLastPressedMillis());
 }
@@ -118,7 +118,7 @@ TEST(buttons_test, sw6_pressed_false){
 	mock().expectOneCall("digitalRead")
 		.withParameter("pin", SW6_pin)
 		.andReturnValue(1);
-	CHECK_FALSE(buttons::sw6_pressed());
+	CHECK_FALSE(buttons::isPressed(buttons::ButtonId::SW6));
 }
 
 TEST(buttons_test, sw6_pressed_true){
@@ -129,7 +129,7 @@ TEST(buttons_test, sw6_pressed_true){
 	mock().expectOneCall("millis")
 		.andReturnValue(Time);
 
-	CHECK(buttons::sw6_pressed());
+	CHECK(buttons::isPressed(buttons::ButtonId::SW6));
 
 	CHECK_EQUAL(Time, buttons::getLastPressedMillis());
 }

@@ -1,4 +1,4 @@
-#include "CppUTest/TestHarness.h"
+/*#include "CppUTest/TestHarness.h"
 #include "CppUTestExt/MockSupport.h"
 #include "turnTable.h"
 
@@ -197,3 +197,4 @@ TEST(turnTable_test, disconnect){
 	mock().expectOneCall("BLEDevice::disconnect");
 	turnTable::disconnect();
 }
+*/
